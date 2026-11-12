@@ -1,0 +1,27 @@
+name: Unzip project
+on: workflow_dispatch
+
+permissions:
+  contents: write
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract zip
+        run: |
+          unzip -o supplier-system.zip -d tmp
+          if [ -d tmp/supplier-system ]; then
+            cp -r tmp/supplier-system/. .
+          else
+            cp -r tmp/. .
+          fi
+          rm -rf tmp supplier-system.zip
+      - name: Commit files
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add -A
+          git commit -m "Extract project files"
+          git push
